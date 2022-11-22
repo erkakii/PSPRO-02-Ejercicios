@@ -3,14 +3,17 @@ import java.util.concurrent.Semaphore;
 public class CharcuteriaCarniceria implements Runnable {
 
 
-    public static Semaphore semaforoCarniceria = new Semaphore(20);
-    public static Semaphore semaforoCharcuteria = new Semaphore(10);
+    //Creamos los semáforos
+    public static Semaphore smfrCarniceria = new Semaphore(20);
+    public static Semaphore smfrCharcuteria = new Semaphore(10);
 
-    private boolean atendidoCarniceria=false;
-    private boolean atendidoCharcuteria=false;
+    //Variables que comprobarán si el hilo ha terminado o no
+    private boolean finCarniceria =false;
+    private boolean finCharcuteria =false;
 
     private int id;
 
+    //Constructor
     public CharcuteriaCarniceria(int id) {
         super();
         this.id = id;
@@ -24,45 +27,53 @@ public class CharcuteriaCarniceria implements Runnable {
         this.id = id;
     }
 
+    /**
+     * Método con el que los hilos "entran" a la carnicería
+     */
     public void carniceria() {
         try {
-            semaforoCarniceria.acquire();
-            System.out.println(Thread.currentThread().getName() + " pidiendo en la carnicería");
+            smfrCarniceria.acquire();
+            System.out.println(Thread.currentThread().getName() + " entra en la carnicería");
             Thread.sleep(1000);
             System.out.println(Thread.currentThread().getName() + " ha terminado en la carnicería");
-            semaforoCarniceria.release();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            smfrCarniceria.release();
+        } catch (InterruptedException interruptedException) {
+            System.err.println("Error: " + interruptedException);
         }
     }
 
+    /**
+     * Método con el que los hilos entran en la charcutería
+     */
     public void charcuteria() {
         try {
-            semaforoCharcuteria.acquire();
-            System.out.println(Thread.currentThread().getName() + " pidiendo en la charcutería");
+            smfrCharcuteria.acquire();
+            System.out.println(Thread.currentThread().getName() + " entra en la charcutería");
             Thread.sleep(1000);
             System.out.println(Thread.currentThread().getName() + " ha terminado en la charcutería");
-            semaforoCharcuteria.release();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            smfrCharcuteria.release();
+        } catch (InterruptedException interruptedException) {
+            System.err.println("Error: " + interruptedException);
         }
     }
+
 
     @Override
     public void run() {
-        while(!atendidoCarniceria || !atendidoCharcuteria) {
-            if(semaforoCarniceria.availablePermits()>0 && !atendidoCarniceria) {
+        while(!finCarniceria || !finCharcuteria) { //Mientras no haya acabado en la charcutería o en la carniceria
+            if(smfrCarniceria.availablePermits()>0 && !finCarniceria) { //Entra en la carniceria
                 carniceria();
-                atendidoCarniceria = true;
+                finCarniceria = true;
             }
-            if (semaforoCharcuteria.availablePermits()>0 && !atendidoCharcuteria) {
+            if (smfrCharcuteria.availablePermits()>0 && !finCharcuteria) { //Si no entra en la charcuteria
                 charcuteria();
-                atendidoCharcuteria = true;
+                finCharcuteria = true;
             }
         }
     }
 
     public static void main(String[] args) {
+        //Crea los nuevos hilos y les da las prioridades
         for(int i=1;i<=10;i++) {
             Thread hilo = new Thread(new CharcuteriaCarniceria(i));
             hilo.setName("Hilo"+i);
