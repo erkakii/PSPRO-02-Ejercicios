@@ -7,7 +7,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class GestorHojas extends Thread {
 
 	//Cambiamos el arrayList por una lista en la que acceden los hilos de uno en uno
-	private volatile static CopyOnWriteArrayList<String> lista = new CopyOnWriteArrayList<String>();
+	private volatile static CopyOnWriteArrayList<String> lista = new CopyOnWriteArrayList<>();
 
 	@Override
 	public void run() {
