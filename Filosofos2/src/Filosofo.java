@@ -1,4 +1,4 @@
-public class Filosofo extends Thread {
+public class Filosofo extends Thread{
 
     private Mesa mesa;
     private int comensal;
@@ -11,31 +11,32 @@ public class Filosofo extends Thread {
     }
 
     public void run(){
-
-        while(true){
+        while (true){
             this.pensando();
             this.mesa.cogerTenedores(this.indiceComensal);
             this.comiendo();
-            System.out.println("Filosofo " + comensal +  " deja de comer, tenedores libres " + (this.mesa.tenedorIzquierda(this.indiceComensal) + 1) + ", " + (this.mesa.tenedorDerecha(this.indiceComensal) + 1) );
-            this.mesa.dejarTenedores(this.indiceComensal);
+            System.out.println("Filosofo " + comensal +  " deja de comer, tenedores libres " + (this.mesa.tenedorIzq(this.indiceComensal) + 1) + ", " + (this.mesa.tenedorDerecha(this.indiceComensal) + 1) );
+            this.mesa.soltarTenedores(this.indiceComensal);
         }
-
     }
 
     public void pensando(){
-
         System.out.println("Filosofo " + comensal + " esta pensando");
+
         try {
             sleep((long) (Math.random() * 4000));
-        } catch (InterruptedException ex) { }
+        } catch (InterruptedException e) {
 
+        }
     }
 
     public void comiendo(){
         System.out.println("Filosofo " + comensal + " esta comiendo");
+
         try {
             sleep((long) (Math.random() * 4000));
-        } catch (InterruptedException ex) { }
-    }
+        } catch (InterruptedException e) {
 
+        }
+    }
 }
